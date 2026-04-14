@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import os
 from azure.storage.blob import BlobServiceClient
 from datetime import timezone
+import time
 
 app = Flask(__name__)
 
@@ -78,18 +79,10 @@ def update_portfolio(portfolio_id):
     data = request.json
     return jsonify({"status": "success", "message": f"Portfolio {portfolio_id} updated with new data."})
 
-@app.route('/slow-endpoint')
+@app.route('/api/slow-endpoint')
 def slow_endpoint():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
-    try:
-        response = requests.get(f"{BACKEND_API_BASE}/api/slow-endpoint")
-        result = response.text
-    except Exception as e:
-        result = {"error": str(e)}
-
-    return result
+    time.sleep(5)
+    return "This was a slow response after 5 seconds"
 
 @app.route("/api/portfolio/<portfolio_id>", methods=["DELETE"])
 def delete_portfolio(portfolio_id):
